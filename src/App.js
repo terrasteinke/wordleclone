@@ -1,9 +1,18 @@
 import './App.css';
 import LetterRow from './LetterRow';
 import WordList from './WordList';
-import {useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
+
+const WORD_LIST_URL = "https://raw.githubusercontent.com/tabatkins/wordle-list/main/words";
+
+const randomNumberInRange = (arrayLength) =>
+  Math.floor(Math.random() * (arrayLength - 1));
 
 function App() {
+
+  const [wordsArray, setWordsArray] = useState([]);
+
+
 
   //const [wordStr, setWordStr] = useState("");
   const [guessNumber, setGuessNumber] = useState(1);
@@ -14,9 +23,20 @@ function App() {
   const [wordStr5, setWordStr5] = useState("");
   const [wordStr6, setWordStr6] = useState("");
   const [justSubmitted, setJustSubmitted] = useState("");
-  const [forCompare, setForCompare] = useState("");
+  const [wordOfTheDay, setWordOfTheDay] = useState("");
 
-  const correctWord = "hello";
+  useEffect(() => {
+    fetch(WORD_LIST_URL)
+      .then((response) => response.text())
+      .then((text) => {
+        const wordsArr = text.split("\n");
+        setWordsArray(wordsArr);
+        console.log(wordsArr);
+        const wordOfTheDay = wordsArr[randomNumberInRange(wordsArr.length)];
+        setWordOfTheDay(wordOfTheDay);
+      })
+      .catch(err => console.error(err));
+  }, []);
 
   const getValue = () => {
     if (guessNumber === 1) {
@@ -44,41 +64,43 @@ function App() {
       setWordStr1(value);
       setJustSubmitted(value);
     }
-      if (guessNumber === 2) {
-        setWordStr2(value);
-        setJustSubmitted(value);
+    if (guessNumber === 2) {
+      setWordStr2(value);
+      setJustSubmitted(value);
 
     }
-      if (guessNumber === 3) {
-        setWordStr3(value);
-        setJustSubmitted(value);
+    if (guessNumber === 3) {
+      setWordStr3(value);
+      setJustSubmitted(value);
 
-      }
-      if (guessNumber === 4) {
-        setWordStr4(value);
-        setJustSubmitted(value);
+    }
+    if (guessNumber === 4) {
+      setWordStr4(value);
+      setJustSubmitted(value);
 
-      }
-      if (guessNumber === 5) {
-        setWordStr5(value);
-        setJustSubmitted(value);
+    }
+    if (guessNumber === 5) {
+      setWordStr5(value);
+      setJustSubmitted(value);
 
-      }
-      if (guessNumber === 6) {
-        setWordStr6(value);
-        setJustSubmitted(value);
+    }
+    if (guessNumber === 6) {
+      setWordStr6(value);
+      setJustSubmitted(value);
 
+    }
   }
-}
-  
+
   const handleSubmit = (event) => {
     if (getValue().length === 5) {
       event.preventDefault();
       setGuessNumber(guessNumber + 1);
-      if (justSubmitted === correctWord) {
+      console.log({ wordOfTheDay });
+      console.log({justSubmitted});
+      if (justSubmitted === wordOfTheDay) {
         alert("you win");
-        console.log("this was correct")
-    }      
+        console.log("this was correct");
+      }
     }
     else {
       event.preventDefault();
@@ -91,7 +113,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <p id="notlogo">Wordle Knockoff</p>       
+        <p id="notlogo">Wordle Knockoff</p>
       </header>
       <div className='App-body'>
         <div className='flexContainer'>
@@ -101,15 +123,15 @@ function App() {
           <LetterRow word={wordStr4} />
           <LetterRow word={wordStr5} />
           <LetterRow word={wordStr6} />
-          </div>
         </div>
-        <form onSubmit={handleSubmit} >
-        <input 
-        maxLength={5} 
-        onChange={(event) => setValue(event.target.value)}
-        value={getValue()}>
+      </div>
+      <form onSubmit={handleSubmit} >
+        <input
+          maxLength={5}
+          onChange={(event) => setValue(event.target.value)}
+          value={getValue()}>
         </input>
-        </form>
+      </form>
       <footer className="App-footer">
         <button id="dark">Dark Mode</button>
         <button id="light">Light Mode</button>
