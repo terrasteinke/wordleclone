@@ -1,23 +1,119 @@
-import logo from './logo.svg';
 import './App.css';
+import LetterRow from './LetterRow';
+import WordList from './WordList';
+import {useState, useEffect} from 'react';
 
 function App() {
+
+  //const [wordStr, setWordStr] = useState("");
+  const [guessNumber, setGuessNumber] = useState(1);
+  const [wordStr1, setWordStr1] = useState("");
+  const [wordStr2, setWordStr2] = useState("");
+  const [wordStr3, setWordStr3] = useState("");
+  const [wordStr4, setWordStr4] = useState("");
+  const [wordStr5, setWordStr5] = useState("");
+  const [wordStr6, setWordStr6] = useState("");
+  const [justSubmitted, setJustSubmitted] = useState("");
+  const [forCompare, setForCompare] = useState("");
+
+  const correctWord = "hello";
+
+  const getValue = () => {
+    if (guessNumber === 1) {
+      return wordStr1;
+    }
+    if (guessNumber === 2) {
+      return wordStr2;
+    }
+    if (guessNumber === 3) {
+      return wordStr3;
+    }
+    if (guessNumber === 4) {
+      return wordStr4;
+    }
+    if (guessNumber === 5) {
+      return wordStr5;
+    }
+    if (guessNumber === 6) {
+      return wordStr6;
+    }
+  }
+
+  const setValue = (value) => {
+    if (guessNumber === 1) {
+      setWordStr1(value);
+      setJustSubmitted(value);
+    }
+      if (guessNumber === 2) {
+        setWordStr2(value);
+        setJustSubmitted(value);
+
+    }
+      if (guessNumber === 3) {
+        setWordStr3(value);
+        setJustSubmitted(value);
+
+      }
+      if (guessNumber === 4) {
+        setWordStr4(value);
+        setJustSubmitted(value);
+
+      }
+      if (guessNumber === 5) {
+        setWordStr5(value);
+        setJustSubmitted(value);
+
+      }
+      if (guessNumber === 6) {
+        setWordStr6(value);
+        setJustSubmitted(value);
+
+  }
+}
+  
+  const handleSubmit = (event) => {
+    if (getValue().length === 5) {
+      event.preventDefault();
+      setGuessNumber(guessNumber + 1);
+      if (justSubmitted === correctWord) {
+        alert("you win");
+        console.log("this was correct")
+    }      
+    }
+    else {
+      event.preventDefault();
+      setValue("");
+      alert("Not enough letters");
+    }
+  }
+
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <p id="notlogo">Wordle Knockoff</p>       
       </header>
+      <div className='App-body'>
+        <div className='flexContainer'>
+          <LetterRow word={wordStr1} />
+          <LetterRow word={wordStr2} />
+          <LetterRow word={wordStr3} />
+          <LetterRow word={wordStr4} />
+          <LetterRow word={wordStr5} />
+          <LetterRow word={wordStr6} />
+          </div>
+        </div>
+        <form onSubmit={handleSubmit} >
+        <input 
+        maxLength={5} 
+        onChange={(event) => setValue(event.target.value)}
+        value={getValue()}>
+        </input>
+        </form>
+      <footer className="App-footer">
+        <button id="dark">Dark Mode</button>
+        <button id="light">Light Mode</button>
+      </footer>
     </div>
   );
 }
