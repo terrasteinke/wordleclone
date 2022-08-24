@@ -37,6 +37,17 @@
   }
 }
 
+.App-body {
+  background-color: #282c34;
+  display: flex;
+  min-height: 50vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
 .flexContainer {
   display: flex;
   flex-direction: column;
@@ -50,29 +61,110 @@
   flex-grow: 1;
 }
 
+.keyboard-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0px 20px 0px;
+  flex-grow: 1;
+}
+
 .tile {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 80px;
-  width: 70px;
-  margin: 10px;
+  height: 60px;
+  width: 55px;
+  margin: 5px;
 
 
   border: 3px solid #61dafb;
   text-transform: uppercase;
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 20px;
+  font-size: 15px;
 
 }
 
-.App-body {
-  background-color: #282c34;
+.tile-right {
   display: flex;
-  min-height: 50vh;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  align-items: center;
+  height: 60px;
+  width: 55px;
+  margin: 5px;
+
+
+  border: 3px solid #61dafb;
+  text-transform: uppercase;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  background-color: #61dafb;
+  color: #282c34;
+}
+
+.tile-in-word {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60px;
+  width: 55px;
+  margin: 5px;
+
+
+  border: 3px solid pink;
+  text-transform: uppercase;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+background-color: pink;
+color: #282c34;
+}
+
+.first-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.keyboard-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  width: 45px;
+  margin: 5px;
+
+
+  text-transform: uppercase;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  background-color: #c3ced1;
+  color: #282c34;
+  border: none;
+}
+
+.functional-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  width: 70px;
+  margin: 5px;
+
+
+  text-transform: uppercase;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  background-color: #c3ced1;
+  color: #282c34;
+  border: none;
+}
+
+.invisible-input {
   color: white;
+  border: none;
 }
