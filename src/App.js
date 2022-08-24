@@ -1,7 +1,7 @@
 import './App.css';
 import LetterRow from './LetterRow';
-import WordList from './WordList';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import KeyboardDisplay from './KeyboardDisplay';
 
 const WORD_LIST_URL = "https://raw.githubusercontent.com/tabatkins/wordle-list/main/words";
 
@@ -11,19 +11,22 @@ const randomNumberInRange = (arrayLength) =>
 function App() {
 
   const [wordsArray, setWordsArray] = useState([]);
-
-
-
-  //const [wordStr, setWordStr] = useState("");
+  
   const [guessNumber, setGuessNumber] = useState(1);
+  
   const [wordStr1, setWordStr1] = useState("");
   const [wordStr2, setWordStr2] = useState("");
   const [wordStr3, setWordStr3] = useState("");
   const [wordStr4, setWordStr4] = useState("");
   const [wordStr5, setWordStr5] = useState("");
   const [wordStr6, setWordStr6] = useState("");
+ 
   const [justSubmitted, setJustSubmitted] = useState("");
   const [wordOfTheDay, setWordOfTheDay] = useState("");
+  
+  const [displayTheme, setDisplayTheme] = useState("");
+  const [headerDisplayTheme, setHeaderDisplayTheme] = useState("");
+  const [bodyDisplayTheme, setBodyDisplayTheme] = useState("");
 
   useEffect(() => {
     fetch(WORD_LIST_URL)
@@ -34,6 +37,7 @@ function App() {
         console.log(wordsArr);
         const wordOfTheDay = wordsArr[randomNumberInRange(wordsArr.length)];
         setWordOfTheDay(wordOfTheDay);
+        console.log(wordOfTheDay);
       })
       .catch(err => console.error(err));
   }, []);
@@ -91,50 +95,86 @@ function App() {
     }
   }
 
+let getClass;
+
+  const compareWord = () => {
+    if (justSubmitted === wordOfTheDay) {
+      alert("you win!")
+    }
+  }
+
   const handleSubmit = (event) => {
     if (getValue().length === 5) {
+      if (wordsArray.includes(justSubmitted)) {
       event.preventDefault();
       setGuessNumber(guessNumber + 1);
+      compareWord();
       console.log({ wordOfTheDay });
       console.log({justSubmitted});
-      if (justSubmitted === wordOfTheDay) {
-        alert("you win");
-        console.log("this was correct");
       }
-    }
-    else {
+      else {
+        event.preventDefault();
+        setValue("");
+        alert("Not a word");
+    }} else {
       event.preventDefault();
       setValue("");
       alert("Not enough letters");
     }
   }
 
+  const ref = useRef(null);
 
-  return (
+  useEffect(() => {
+    if (displayTheme === "dark") {
+      console.log("oh no it's dark!")
+      setHeaderDisplayTheme("dark-header")
+      setBodyDisplayTheme("body-dark")
+    } else if (displayTheme === "light") {
+      console.log("I'm turning out the lights")
+      setHeaderDisplayTheme("light-header")
+      setBodyDisplayTheme("light-body")
+    } else {
+      console.log("idk a catch-all?")
+      setHeaderDisplayTheme("light-header")
+      setBodyDisplayTheme("light-body")
+    }
+  }, [displayTheme])
+
+  useEffect(() => {
+    ref.current.focus();
+  }, [])
+
+    return (
     <div className="App">
-      <header className="App-header">
+      <header className={headerDisplayTheme}>
         <p id="notlogo">Wordle Knockoff</p>
       </header>
-      <div className='App-body'>
+      <div className={bodyDisplayTheme}>
         <div className='flexContainer'>
-          <LetterRow word={wordStr1} />
-          <LetterRow word={wordStr2} />
-          <LetterRow word={wordStr3} />
-          <LetterRow word={wordStr4} />
-          <LetterRow word={wordStr5} />
-          <LetterRow word={wordStr6} />
+          <LetterRow word={wordStr1} correctWord={wordOfTheDay} getClass={getClass} />
+          <LetterRow word={wordStr2} correctWord={wordOfTheDay} getClass={getClass}/>
+          <LetterRow word={wordStr3} correctWord={wordOfTheDay} getClass={getClass}/>
+          <LetterRow word={wordStr4} correctWord={wordOfTheDay} getClass={getClass}/>
+          <LetterRow word={wordStr5} correctWord={wordOfTheDay} getClass={getClass}/>
+          <LetterRow word={wordStr6} correctWord={wordOfTheDay} getClass={getClass}/>
+        </div>
+        <div className='flexContainer'>
+          <KeyboardDisplay />
         </div>
       </div>
       <form onSubmit={handleSubmit} >
         <input
+        className="invisible-input"
+        ref={ref}
           maxLength={5}
           onChange={(event) => setValue(event.target.value)}
           value={getValue()}>
         </input>
       </form>
       <footer className="App-footer">
-        <button id="dark">Dark Mode</button>
-        <button id="light">Light Mode</button>
+        <button id="dark" onClick={() => setDisplayTheme("dark")}>Dark Mode</button>
+        <button id="light" onClick={() => setDisplayTheme("light")}>Light Mode</button>
       </footer>
     </div>
   );
