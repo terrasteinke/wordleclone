@@ -2,6 +2,7 @@ import './App.css';
 import LetterRow from './LetterRow';
 import { useState, useEffect, useRef } from 'react';
 import KeyboardDisplay from './KeyboardDisplay';
+import Stats from './Stats';
 
 const WORD_LIST_URL = "https://raw.githubusercontent.com/tabatkins/wordle-list/main/words";
 
@@ -9,6 +10,15 @@ const randomNumberInRange = (arrayLength) =>
   Math.floor(Math.random() * (arrayLength - 1));
 
 function App() {
+
+  const date = new Date();
+  const todayKey = (
+  `${date.getUTCFullYear()}-${date.getUTCMonth().toString().length < 2 
+    ? '0' + date.getUTCMonth()
+    : date.getUTCMonth()}-${date.getUTCDate().toString().length < 2
+    ? '0' + date.getUTCDate()
+    : date.getUTCDate()}`
+  )
 
   const [wordsArray, setWordsArray] = useState([]);
   
@@ -27,6 +37,13 @@ function App() {
   const [displayTheme, setDisplayTheme] = useState("");
   const [headerDisplayTheme, setHeaderDisplayTheme] = useState("");
   const [bodyDisplayTheme, setBodyDisplayTheme] = useState("");
+
+  const [finalGuessNumber, setFinalGuessNumber] = useState(0);
+  const [isWin, setIsWin] = useState(false);
+  const [winAmount, setWinAmount] = useState(JSON.parse(localStorage.getItem('winRate')) ? JSON.parse(localStorage.getItem('winRate')) : 0);
+  const [isShown, setIsShown] = useState(false);
+
+  let getClass;
 
   useEffect(() => {
     fetch(WORD_LIST_URL)
@@ -95,15 +112,36 @@ function App() {
     }
   }
 
-let getClass;
 
   const compareWord = () => {
     if (justSubmitted === wordOfTheDay) {
       alert("you win!")
+      setFinalGuessNumber(guessNumber);
+      setWinAmount(winAmount + 1);
+      getStats();
+      setWinRate(winRate + 1);
     }
   }
 
+  const [winRate, setWinRate] = useState(winAmount);
+
+  useEffect(() => {
+    localStorage.setItem('winRate', JSON.stringify(winRate));
+  }, [winRate])
+
+  useEffect(() => {
+    const winHistory = JSON.parse(localStorage.getItem('winRate'));
+    if (winHistory) {
+      setWinRate(winHistory);
+    }
+  }, []);
+
+  const getStats = () => {
+    setIsShown(true);
+    }
+
   const handleSubmit = (event) => {
+    if (guessNumber < 7) {
     if (getValue().length === 5) {
       if (wordsArray.includes(justSubmitted)) {
       event.preventDefault();
@@ -111,6 +149,7 @@ let getClass;
       compareWord();
       console.log({ wordOfTheDay });
       console.log({justSubmitted});
+      console.log({localStorage})
       }
       else {
         event.preventDefault();
@@ -121,6 +160,9 @@ let getClass;
       setValue("");
       alert("Not enough letters");
     }
+  } else if (guessNumber >= 7) {
+    alert("Sorry, you did not win. The correct answer was: " + wordOfTheDay);
+  }
   }
 
   const ref = useRef(null);
@@ -160,7 +202,11 @@ let getClass;
           <LetterRow word={wordStr6} correctWord={wordOfTheDay} getClass={getClass}/>
         </div>
         <div className='flexContainer'>
-          <KeyboardDisplay />
+        <KeyboardDisplay />
+        </div>
+        {isShown && <Stats winAmount={winAmount} finalGuessNumber={finalGuessNumber} winRate={winRate}/>}
+        <div>
+
         </div>
       </div>
       <form onSubmit={handleSubmit} >

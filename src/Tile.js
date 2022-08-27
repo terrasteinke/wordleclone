@@ -1,21 +1,21 @@
 import { useState, useEffect } from 'react';
 
-const Tile = ({letterGuess, wholeWord, correctLetter, getClass}) => {
+const Tile = ({ letterGuess, wholeWord, correctLetter, getClass }) => {
 
 
-//gets the tiles to change onChange not onSubmit
- /* 
-    let tileClass;
-
-    if (wholeWord !== undefined) {
-       if (letterGuess === correctLetter) {
-            tileClass="tile-right";
-        } else if (wholeWord.split("").includes(letterGuess)) {
-            tileClass="tile-in-word";
-        } else {
-            tileClass="tile";
-        }
-    }*/
+    //gets the tiles to change onChange not onSubmit
+    /* 
+       let tileClass;
+   
+       if (wholeWord !== undefined) {
+          if (letterGuess === correctLetter) {
+               tileClass="tile-right";
+           } else if (wholeWord.split("").includes(letterGuess)) {
+               tileClass="tile-in-word";
+           } else {
+               tileClass="tile";
+           }
+       }*/
 
     //attempt at onClickListener to change on "enter"
 
@@ -25,25 +25,24 @@ const Tile = ({letterGuess, wholeWord, correctLetter, getClass}) => {
         const getTileClass = () => {
             if (wholeWord !== undefined) {
                 if (letterGuess === correctLetter) {
-                     setTileClass("tile-right");
-                 } else if (wholeWord.split("").includes(letterGuess)) {
+                    setTileClass("tile-right");
+                } else if (wholeWord.split("").includes(letterGuess)) {
                     setTileClass("tile-in-word");
                 } else {
                     setTileClass("tile");
                 }
+            }
         }
-    }
 
         const keyDownHandler = (event) => {
             console.log(event.key)
             if (event.key === 'Enter') {
-                console.log("entered");
                 getTileClass();
             }
         };
-    
+
         document.addEventListener('keydown', keyDownHandler);
-    
+
         return () => {
             document.removeEventListener('keydown', keyDownHandler);
         };
@@ -51,9 +50,9 @@ const Tile = ({letterGuess, wholeWord, correctLetter, getClass}) => {
 
     return (
         <>
-            <div className={tileClass ? tileClass : "tile" }>{letterGuess}</div>
-              </>
- );
+            <div className={tileClass ? tileClass : "tile"}>{letterGuess}</div>
+        </>
+    );
 
 };
 
