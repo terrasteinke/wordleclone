@@ -142,7 +142,7 @@
 
 }
 
-.tile-right {
+.tile-not-right {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -156,6 +156,23 @@
   font-family: Arial, Helvetica, sans-serif;
   font-size: 15px;
   background-color: #61dafb;
+  color: #282c34;
+}
+
+.tile-right {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60px;
+  width: 55px;
+  margin: 5px;
+
+
+  border: 3px solid #87fb61;
+  text-transform: uppercase;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  background-color: #87fb61;
   color: #282c34;
 }
 

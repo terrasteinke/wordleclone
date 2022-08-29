@@ -34,14 +34,17 @@ function App() {
   const [justSubmitted, setJustSubmitted] = useState("");
   const [wordOfTheDay, setWordOfTheDay] = useState("");
   
-  const [displayTheme, setDisplayTheme] = useState("");
-  const [headerDisplayTheme, setHeaderDisplayTheme] = useState("");
-  const [bodyDisplayTheme, setBodyDisplayTheme] = useState("");
+  const [displayTheme, setDisplayTheme] = useState(JSON.parse(localStorage.getItem('displayConstant')) ? JSON.parse(localStorage.getItem('displayConstant')) : "");
+  const [headerDisplayTheme, setHeaderDisplayTheme] = useState(JSON.parse(localStorage.getItem('displayConstant')) ? JSON.parse(localStorage.getItem('displayConstant')) : "");
+  const [bodyDisplayTheme, setBodyDisplayTheme] = useState(JSON.parse(localStorage.getItem('displayConstant')) ? JSON.parse(localStorage.getItem('displayConstant')) : "");
 
   const [finalGuessNumber, setFinalGuessNumber] = useState(0);
   const [isWin, setIsWin] = useState(false);
   const [winAmount, setWinAmount] = useState(JSON.parse(localStorage.getItem('winRate')) ? JSON.parse(localStorage.getItem('winRate')) : 0);
   const [isShown, setIsShown] = useState(false);
+  const [currentWinStreak, setCurrentWinStreak] = useState(JSON.parse(localStorage.getItem('curWinStreak')) ? JSON.parse(localStorage.getItem('curWinStreak')) : 0)
+  const [longestWinStreak, setLongestWinStreak] = useState(JSON.parse(localStorage.getItem('longWinStreak')) ? JSON.parse(localStorage.getItem('longWinStreak')) : 0)
+
 
   let getClass;
 
@@ -112,6 +115,7 @@ function App() {
     }
   }
 
+  const [isDisabled, setIsDisabled] = useState(false);
 
   const compareWord = () => {
     if (justSubmitted === wordOfTheDay) {
@@ -120,7 +124,13 @@ function App() {
       setWinAmount(winAmount + 1);
       getStats();
       setWinRate(winRate + 1);
-    }
+      setCurWinStreak(curWinStreak + 1);
+      setIsWin(true);
+        if (curWinStreak >= longWinStreak) {
+          setLongWinStreak(curWinStreak + 1)
+      }
+      setIsDisabled(true);
+    } 
   }
 
   const [winRate, setWinRate] = useState(winAmount);
@@ -135,13 +145,52 @@ function App() {
       setWinRate(winHistory);
     }
   }, []);
+  
+  const [curWinStreak, setCurWinStreak] = useState(currentWinStreak);
+
+  useEffect(() => {
+    localStorage.setItem('curWinStreak', JSON.stringify(curWinStreak));
+  }, [curWinStreak])
+
+  useEffect(() => {
+    const winStreakHistory = JSON.parse(localStorage.getItem('curWinStreak'));
+    if (winStreakHistory) {
+      setCurWinStreak(winStreakHistory);
+    }
+  }, []);
+
+  const [longWinStreak, setLongWinStreak] = useState(longestWinStreak);
+
+  useEffect(() => {
+    localStorage.setItem('longWinStreak', JSON.stringify(longWinStreak));
+  }, [longWinStreak])
+
+  useEffect(() => {
+    const winStreakRecord = JSON.parse(localStorage.getItem('longWinStreak'));
+    if (winStreakRecord) {
+      setLongWinStreak(winStreakRecord);
+    }
+  }, []);
+
+  const [displayConstant, setDisplayConstant] = useState(displayTheme);
+
+  useEffect(() => {
+    localStorage.setItem('displayConstant', JSON.stringify(displayConstant));
+  }, [displayConstant]);
+
+  useEffect(() => {
+    const stillDisplayed = JSON.parse(localStorage.getItem('displayConstant'));
+    if (stillDisplayed) {
+      setDisplayConstant(stillDisplayed);
+    }
+  })
 
   const getStats = () => {
     setIsShown(true);
     }
 
   const handleSubmit = (event) => {
-    if (guessNumber < 7) {
+    if (guessNumber < 6) {
     if (getValue().length === 5) {
       if (wordsArray.includes(justSubmitted)) {
       event.preventDefault();
@@ -160,19 +209,25 @@ function App() {
       setValue("");
       alert("Not enough letters");
     }
-  } else if (guessNumber >= 7) {
+  } else if (guessNumber === 6) {
+    event.preventDefault();
+    if (justSubmitted != wordOfTheDay) {
     alert("Sorry, you did not win. The correct answer was: " + wordOfTheDay);
+    setCurWinStreak(0);
+    setIsDisabled(true);
+    setIsShown(true);
+    }
   }
   }
 
   const ref = useRef(null);
 
   useEffect(() => {
-    if (displayTheme === "dark") {
+    if (displayConstant === "dark") {
       console.log("oh no it's dark!")
       setHeaderDisplayTheme("dark-header")
       setBodyDisplayTheme("body-dark")
-    } else if (displayTheme === "light") {
+    } else if (displayConstant === "light") {
       console.log("I'm turning out the lights")
       setHeaderDisplayTheme("light-header")
       setBodyDisplayTheme("light-body")
@@ -181,7 +236,7 @@ function App() {
       setHeaderDisplayTheme("light-header")
       setBodyDisplayTheme("light-body")
     }
-  }, [displayTheme])
+  }, [displayConstant])
 
   useEffect(() => {
     ref.current.focus();
@@ -204,13 +259,15 @@ function App() {
         <div className='flexContainer'>
         <KeyboardDisplay />
         </div>
-        {isShown && <Stats winAmount={winAmount} finalGuessNumber={finalGuessNumber} winRate={winRate}/>}
+        {isShown && <Stats winAmount={winAmount} finalGuessNumber={finalGuessNumber} winRate={winRate} longestWinStreak={longWinStreak} currentWinStreak={curWinStreak}/>}
         <div>
-
+        <button id="dark" onClick={() => setDisplayConstant("dark")}>Dark Mode</button>
+        <button id="light" onClick={() => setDisplayConstant("light")}>Light Mode</button>
         </div>
       </div>
       <form onSubmit={handleSubmit} >
         <input
+        disabled={isDisabled}
         className="invisible-input"
         ref={ref}
           maxLength={5}
@@ -219,8 +276,6 @@ function App() {
         </input>
       </form>
       <footer className="App-footer">
-        <button id="dark" onClick={() => setDisplayTheme("dark")}>Dark Mode</button>
-        <button id="light" onClick={() => setDisplayTheme("light")}>Light Mode</button>
       </footer>
     </div>
   );
